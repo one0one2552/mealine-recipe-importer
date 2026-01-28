@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  mealie-importer:
+    build: .
+    container_name: mealie-recipe-importer
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      # Mealie Konfiguration
+      - MEALIE_URL=${MEALIE_URL:-http://mealie:9000}
+      - MEALIE_API_TOKEN=${MEALIE_API_TOKEN}
+      - MEALIE_TIMEOUT=${MEALIE_TIMEOUT:-30}
+      # Gemini Konfiguration
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+    # Optional: Wenn Mealie im selben Netzwerk läuft
+    # networks:
+    #   - mealie_default
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# Optional: Netzwerk für Kommunikation mit Mealie
+# networks:
+#   mealie_default:
+#     external: true
