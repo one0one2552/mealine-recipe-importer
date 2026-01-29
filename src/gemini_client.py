@@ -584,7 +584,7 @@ class GeminiClient:
         caption: Optional[str] = None,
         progress_callback: Optional[callable] = None,
         on_model_switch: Optional[callable] = None
-    ) -> tuple[dict, str, int]:
+    ) -> tuple[dict, str]:
         """
         Extrahiert Rezeptdaten aus einem Video.
         
@@ -597,7 +597,7 @@ class GeminiClient:
             on_model_switch: Callback bei Modellwechsel
             
         Returns:
-            Tuple aus (Rezept-Dictionary, verwendetes Modell, bester Frame-Timestamp in Sekunden)
+            Tuple aus (Rezept-Dictionary, verwendetes Modell)
             
         Raises:
             GeminiError: Bei API-Fehlern
@@ -649,16 +649,6 @@ class GeminiClient:
             
             logger.info(f"Video bereit: State={video_file.state.name}")
             
-            # Zuerst: Besten Frame-Timestamp ermitteln
-            best_timestamp = 0
-            try:
-                update_progress("🎬 Suche bestes Bild im Video...")
-                best_timestamp = self.extract_best_frame_timestamp(
-                    video_file, model, on_model_switch
-                )
-            except Exception as e:
-                logger.warning(f"Konnte besten Frame nicht ermitteln: {e}")
-            
             # Prompt auswählen - mit oder ohne Caption
             if caption and caption.strip():
                 prompt = RECIPE_PROMPT_VIDEO_WITH_CAPTION.format(caption=caption)
@@ -682,8 +672,8 @@ class GeminiClient:
             
             clean_json = self._clean_json_response(response_text)
             recipe = json.loads(clean_json)
-            logger.info(f"Rezept aus Video extrahiert: {recipe.get('name', 'Unbekannt')}, bester Frame bei {best_timestamp}s")
-            return recipe, used_model, best_timestamp
+            logger.info(f"Rezept aus Video extrahiert: {recipe.get('name', 'Unbekannt')}")
+            return recipe, used_model
             
         except json.JSONDecodeError as e:
             logger.error(f"JSON Parse Fehler: {e}")

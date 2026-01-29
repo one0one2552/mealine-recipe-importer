@@ -23,8 +23,7 @@ from src.url_processor import (
     download_video_from_url, 
     URLError, 
     is_supported_url,
-    format_video_info_for_display,
-    extract_frame_from_video
+    format_video_info_for_display
 )
 
 # Logging für Streamlit
@@ -46,9 +45,7 @@ def init_session_state():
         "model_switches": [],
         "photo_images": [],
         "photo_names": None,
-        "best_image_index": 0,
-        "best_frame_timestamp": 0,
-        "best_frame_data": None
+        "best_image_index": 0
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -69,8 +66,6 @@ def reset_session_state():
     st.session_state.photo_images = []
     st.session_state.photo_names = None
     st.session_state.best_image_index = 0
-    st.session_state.best_frame_timestamp = 0
-    st.session_state.best_frame_data = None
 
 
 def render_sidebar(config):
@@ -324,7 +319,7 @@ def process_file(selected_model):
             caption = st.session_state.video_caption if st.session_state.file_type == "url_video" else None
             
             with st.spinner("🎬 Analysiere Video (kann 1-2 Minuten dauern)..."):
-                recipe, used_model, best_timestamp = gemini_client.extract_recipe_from_video(
+                recipe, used_model = gemini_client.extract_recipe_from_video(
                     st.session_state.file_bytes,
                     st.session_state.last_filename,
                     selected_model,
@@ -334,18 +329,6 @@ def process_file(selected_model):
                 )
                 st.session_state.recipe_json = recipe
                 st.session_state.used_model = used_model
-                st.session_state.best_frame_timestamp = best_timestamp
-            
-            # Besten Frame als Bild extrahieren (statt Thumbnail)
-            if best_timestamp > 0:
-                update_status(f"🖼️ Extrahiere Rezeptbild bei {best_timestamp}s...")
-                frame_data = extract_frame_from_video(
-                    st.session_state.file_bytes, 
-                    best_timestamp
-                )
-                if frame_data:
-                    st.session_state.best_frame_data = frame_data
-                    st.info(f"📷 KI hat Frame bei {best_timestamp}s als Rezeptbild ausgewählt")
             
             status_placeholder.empty()
             
@@ -432,17 +415,7 @@ def render_action_buttons(recipe):
             if st.session_state.file_type == "url_video" and st.session_state.video_info:
                 video_info = st.session_state.video_info
                 source_url = video_info.original_url
-                
-                # KI-ausgewählten Frame bevorzugen, sonst Thumbnail
-                if st.session_state.best_frame_data:
-                    thumbnail_data = st.session_state.best_frame_data
-                else:
-                    thumbnail_data = video_info.thumbnail_data
-                    
-            elif st.session_state.file_type == "video":
-                # Video-Upload ohne URL
-                if st.session_state.best_frame_data:
-                    thumbnail_data = st.session_state.best_frame_data
+                thumbnail_data = video_info.thumbnail_data
                     
             elif st.session_state.file_type in ["photo", "photos"]:
                 # Bei Fotos: das beste Bild als Rezeptbild nehmen
