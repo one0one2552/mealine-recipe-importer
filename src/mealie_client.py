@@ -5,6 +5,7 @@ Handhabt alle Kommunikation mit der Mealie API.
 
 import logging
 import uuid
+import re
 from dataclasses import dataclass
 from typing import Optional
 import requests
@@ -235,6 +236,11 @@ class MealieClient:
             existing_recipe["description"] = description
             existing_recipe["recipeYield"] = recipe_data.get("recipeYield", "1 Portion")
             
+            # Servings (Zahl) aus recipeYield extrahieren
+            existing_recipe["recipeServings"] = self._extract_servings(
+                recipe_data.get("recipeYield", "1 Portion")
+            )
+            
             # Zutaten formatieren
             ingredients = self._format_ingredients(recipe_data.get("recipeIngredient", []))
             existing_recipe["recipeIngredient"] = ingredients
@@ -262,6 +268,31 @@ class MealieClient:
         except Exception as e:
             logger.exception("Unerwarteter Fehler beim Erstellen des Rezepts")
             return False, f"Fehler: {e}"
+    
+    def _extract_servings(self, recipe_yield: str) -> int:
+        """
+        Extrahiert die Portionszahl aus dem recipeYield String.
+        
+        Args:
+            recipe_yield: Text wie "2 Portionen", "4 Personen", "1 Portion"
+            
+        Returns:
+            Anzahl der Portionen als Integer (mindestens 1)
+        """
+        if not recipe_yield:
+            return 1
+        
+        # Versuche eine Zahl am Anfang zu finden
+        match = re.search(r'^(\d+)', recipe_yield.strip())
+        if match:
+            return max(1, int(match.group(1)))
+        
+        # Fallback: Suche irgendeine Zahl im String
+        match = re.search(r'(\d+)', recipe_yield)
+        if match:
+            return max(1, int(match.group(1)))
+        
+        return 1
     
     def _format_ingredients(self, ingredients: list) -> list:
         """

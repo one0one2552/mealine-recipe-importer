@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ ./src/
 COPY app.py .
 
-# Streamlit Konfiguration
+# Streamlit Konfiguration (optimiert für Mobile/Safari)
 RUN mkdir -p ~/.streamlit
 RUN echo '\
 [server]\n\
@@ -27,9 +27,16 @@ port = 8501\n\
 address = "0.0.0.0"\n\
 enableCORS = false\n\
 enableXsrfProtection = false\n\
+maxUploadSize = 200\n\
+maxMessageSize = 200\n\
+enableWebsocketCompression = false\n\
 \n\
 [browser]\n\
 gatherUsageStats = false\n\
+\n\
+[client]\n\
+showErrorDetails = true\n\
+toolbarMode = "minimal"\n\
 ' > ~/.streamlit/config.toml
 
 # Port freigeben

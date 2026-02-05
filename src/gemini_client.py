@@ -25,29 +25,35 @@ RECIPE_PROMPT_PDF = """
 Analysiere diesen Rezept-Text und wandle ihn in ein valides JSON für die Mealie API um.
 Antworte NUR mit dem JSON-Objekt, ohne Erklärungen oder Markdown.
 
-WICHTIG: Rechne ALLE Zutatenmengen auf 1 PORTION um!
-Wenn das Rezept z.B. für 4 Portionen ist, teile alle Mengen durch 4.
+WICHTIG: Behalte die ORIGINALMENGEN aus dem Rezept bei! NICHT auf 1 Portion umrechnen!
+Gib bei recipeYield an, für wieviele Portionen/Personen das Rezept ist (z.B. "4 Portionen" oder "für 6 Personen").
+
+WICHTIG für Zubereitungsschritte: Wenn in einem Schritt nur ein TEIL einer Zutat verwendet wird,
+gib die RELATIVE Menge an statt der absoluten. Beispiel:
+- FALSCH: "Gib 200g Mehl in die Schüssel" (wenn insgesamt 600g Mehl benötigt werden)
+- RICHTIG: "Gib 1/3 vom Mehl in die Schüssel" oder "Gib die Hälfte der Butter dazu"
+So bleibt das Rezept beim Skalieren der Portionen konsistent.
 
 Das JSON muss exakt dieses Format haben:
 {{
     "name": "Rezeptname",
     "description": "Eine kurze Beschreibung des Rezepts",
-    "recipeYield": "1 Portion",
+    "recipeYield": "4 Portionen",
     "recipeIngredient": [
-        {{"quantity": 50, "unit": "g", "food": "Mehl", "note": ""}},
-        {{"quantity": 25, "unit": "ml", "food": "Milch", "note": ""}},
-        {{"quantity": 0.25, "unit": "TL", "food": "Salz", "note": ""}},
-        {{"quantity": 0.5, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
-        {{"quantity": 0.25, "unit": "", "food": "Ei", "note": ""}}
+        {{"quantity": 500, "unit": "g", "food": "Mehl", "note": ""}},
+        {{"quantity": 250, "unit": "ml", "food": "Milch", "note": ""}},
+        {{"quantity": 1, "unit": "TL", "food": "Salz", "note": ""}},
+        {{"quantity": 2, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
+        {{"quantity": 3, "unit": "", "food": "Ei", "note": ""}}
     ],
     "recipeInstructions": [
-        {{"text": "Schritt 1 Beschreibung"}},
+        {{"text": "Schritt 1 - bei Teilmengen relative Angaben nutzen (z.B. 'die Hälfte vom Mehl')"}},
         {{"text": "Schritt 2 Beschreibung"}}
     ]
 }}
 
-WICHTIG für recipeIngredient (IMMER für 1 Portion!):
-- "quantity": Anzahl als Zahl für 1 PORTION (z.B. 50, 0.25, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
+WICHTIG für recipeIngredient (ORIGINALMENGEN beibehalten!):
+- "quantity": Die ORIGINALMENGE aus dem Rezept als Zahl (z.B. 500, 3, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
 - "unit": Einheit als Text (g, kg, ml, l, TL, EL, Prise, Stück, Bund, Dose, Packung, etc.). Leer lassen wenn keine Einheit.
 - "food": Das Lebensmittel selbst (Mehl, Salz, Karotten, etc.)
 - "note": Zusätzliche Hinweise (z.B. "gehackt", "frisch", "optional"). Leer lassen wenn keine.
@@ -63,8 +69,13 @@ Analysiere dieses Rezept-Video und extrahiere alle Informationen.
 WICHTIG: Antworte komplett auf DEUTSCH, auch wenn das Video in einer anderen Sprache ist.
 Übersetze alle Zutaten und Zubereitungsschritte ins Deutsche.
 
-WICHTIG: Rechne ALLE Zutatenmengen auf 1 PORTION um!
-Wenn das Rezept z.B. für 4 Portionen ist, teile alle Mengen durch 4.
+WICHTIG: Behalte die ORIGINALMENGEN aus dem Rezept bei! NICHT auf 1 Portion umrechnen!
+Gib bei recipeYield an, für wieviele Portionen/Personen das Rezept ist.
+
+WICHTIG für Zubereitungsschritte: Wenn in einem Schritt nur ein TEIL einer Zutat verwendet wird,
+gib die RELATIVE Menge an statt der absoluten. Beispiel:
+- FALSCH: "Gib 200g Mehl in die Schüssel" (wenn insgesamt 600g Mehl benötigt werden)
+- RICHTIG: "Gib 1/3 vom Mehl in die Schüssel" oder "Gib die Hälfte der Butter dazu"
 
 Antworte NUR mit einem validen JSON-Objekt, ohne Erklärungen oder Markdown.
 
@@ -72,27 +83,27 @@ Das JSON muss exakt dieses Format haben:
 {{
     "name": "Rezeptname auf Deutsch",
     "description": "Eine kurze Beschreibung des Rezepts auf Deutsch",
-    "recipeYield": "1 Portion",
+    "recipeYield": "4 Portionen",
     "recipeIngredient": [
-        {{"quantity": 50, "unit": "g", "food": "Mehl", "note": ""}},
-        {{"quantity": 25, "unit": "ml", "food": "Milch", "note": ""}},
-        {{"quantity": 0.25, "unit": "TL", "food": "Salz", "note": ""}},
-        {{"quantity": 0.5, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
-        {{"quantity": 0.25, "unit": "", "food": "Ei", "note": ""}}
+        {{"quantity": 500, "unit": "g", "food": "Mehl", "note": ""}},
+        {{"quantity": 250, "unit": "ml", "food": "Milch", "note": ""}},
+        {{"quantity": 1, "unit": "TL", "food": "Salz", "note": ""}},
+        {{"quantity": 2, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
+        {{"quantity": 3, "unit": "", "food": "Ei", "note": ""}}
     ],
     "recipeInstructions": [
-        {{"text": "Schritt 1 Beschreibung auf Deutsch"}},
+        {{"text": "Schritt 1 - bei Teilmengen relative Angaben nutzen (z.B. 'die Hälfte vom Mehl')"}},
         {{"text": "Schritt 2 Beschreibung auf Deutsch"}}
     ]
 }}
 
-WICHTIG für recipeIngredient (IMMER für 1 Portion!):
-- "quantity": Anzahl als Zahl für 1 PORTION (z.B. 50, 0.25, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
+WICHTIG für recipeIngredient (ORIGINALMENGEN beibehalten!):
+- "quantity": Die ORIGINALMENGE aus dem Rezept als Zahl (z.B. 500, 3, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
 - "unit": Einheit als Text (g, kg, ml, l, TL, EL, Prise, Stück, Bund, Dose, Packung, etc.). Leer lassen wenn keine Einheit.
 - "food": Das Lebensmittel selbst (Mehl, Salz, Karotten, etc.)
 - "note": Zusätzliche Hinweise (z.B. "gehackt", "frisch", "optional"). Leer lassen wenn keine.
 
-Extrahiere alle Zutaten die du siehst oder hörst, rechne auf 1 Portion um, und beschreibe jeden Zubereitungsschritt detailliert auf Deutsch.
+Extrahiere alle Zutaten die du siehst oder hörst mit den ORIGINALMENGEN und beschreibe jeden Zubereitungsschritt detailliert auf Deutsch.
 """
 
 RECIPE_PROMPT_VIDEO_WITH_CAPTION = """
@@ -100,8 +111,13 @@ Analysiere dieses Rezept-Video zusammen mit der dazugehörigen Beschreibung/Capt
 WICHTIG: Antworte komplett auf DEUTSCH, auch wenn das Video in einer anderen Sprache ist.
 Übersetze alle Zutaten und Zubereitungsschritte ins Deutsche.
 
-WICHTIG: Rechne ALLE Zutatenmengen auf 1 PORTION um!
-Wenn das Rezept z.B. für 4 Portionen ist, teile alle Mengen durch 4.
+WICHTIG: Behalte die ORIGINALMENGEN aus dem Rezept bei! NICHT auf 1 Portion umrechnen!
+Gib bei recipeYield an, für wieviele Portionen/Personen das Rezept ist.
+
+WICHTIG für Zubereitungsschritte: Wenn in einem Schritt nur ein TEIL einer Zutat verwendet wird,
+gib die RELATIVE Menge an statt der absoluten. Beispiel:
+- FALSCH: "Gib 200g Mehl in die Schüssel" (wenn insgesamt 600g Mehl benötigt werden)
+- RICHTIG: "Gib 1/3 vom Mehl in die Schüssel" oder "Gib die Hälfte der Butter dazu"
 
 === VIDEO-BESCHREIBUNG / CAPTION ===
 {caption}
@@ -120,35 +136,40 @@ Das JSON muss exakt dieses Format haben:
 {{
     "name": "Rezeptname auf Deutsch",
     "description": "Eine kurze Beschreibung des Rezepts auf Deutsch",
-    "recipeYield": "1 Portion",
+    "recipeYield": "4 Portionen",
     "recipeIngredient": [
-        {{"quantity": 50, "unit": "g", "food": "Mehl", "note": ""}},
-        {{"quantity": 25, "unit": "ml", "food": "Milch", "note": ""}},
-        {{"quantity": 0.25, "unit": "TL", "food": "Salz", "note": ""}},
-        {{"quantity": 0.5, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
-        {{"quantity": 0.25, "unit": "", "food": "Ei", "note": ""}}
+        {{"quantity": 500, "unit": "g", "food": "Mehl", "note": ""}},
+        {{"quantity": 250, "unit": "ml", "food": "Milch", "note": ""}},
+        {{"quantity": 1, "unit": "TL", "food": "Salz", "note": ""}},
+        {{"quantity": 2, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
+        {{"quantity": 3, "unit": "", "food": "Ei", "note": ""}}
     ],
     "recipeInstructions": [
-        {{"text": "Schritt 1 Beschreibung auf Deutsch"}},
+        {{"text": "Schritt 1 - bei Teilmengen relative Angaben nutzen (z.B. 'die Hälfte vom Mehl')"}},
         {{"text": "Schritt 2 Beschreibung auf Deutsch"}}
     ]
 }}
 
-WICHTIG für recipeIngredient (IMMER für 1 Portion!):
-- "quantity": Anzahl als Zahl für 1 PORTION (z.B. 50, 0.25, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
+WICHTIG für recipeIngredient (ORIGINALMENGEN beibehalten!):
+- "quantity": Die ORIGINALMENGE aus dem Rezept als Zahl (z.B. 500, 3, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
 - "unit": Einheit als Text (g, kg, ml, l, TL, EL, Prise, Stück, Bund, Dose, Packung, etc.). Leer lassen wenn keine Einheit.
 - "food": Das Lebensmittel selbst (Mehl, Salz, Karotten, etc.)
 - "note": Zusätzliche Hinweise (z.B. "gehackt", "frisch", "optional"). Leer lassen wenn keine.
 
-Extrahiere alle Zutaten die du siehst, hörst oder in der Caption findest. Rechne auf 1 Portion um und beschreibe jeden Zubereitungsschritt detailliert auf Deutsch.
+Extrahiere alle Zutaten die du siehst, hörst oder in der Caption findest mit den ORIGINALMENGEN. Beschreibe jeden Zubereitungsschritt detailliert auf Deutsch.
 """
 
 RECIPE_PROMPT_IMAGE = """
 Analysiere dieses Foto eines Rezepts (z.B. aus einem Kochbuch oder einer Zeitschrift).
 Extrahiere alle Informationen die du auf dem Bild lesen kannst.
 
-WICHTIG: Rechne ALLE Zutatenmengen auf 1 PORTION um!
-Wenn das Rezept z.B. für 4 Portionen ist, teile alle Mengen durch 4.
+WICHTIG: Behalte die ORIGINALMENGEN aus dem Rezept bei! NICHT auf 1 Portion umrechnen!
+Gib bei recipeYield an, für wieviele Portionen/Personen das Rezept ist.
+
+WICHTIG für Zubereitungsschritte: Wenn in einem Schritt nur ein TEIL einer Zutat verwendet wird,
+gib die RELATIVE Menge an statt der absoluten. Beispiel:
+- FALSCH: "Gib 200g Mehl in die Schüssel" (wenn insgesamt 600g Mehl benötigt werden)
+- RICHTIG: "Gib 1/3 vom Mehl in die Schüssel" oder "Gib die Hälfte der Butter dazu"
 
 Antworte NUR mit einem validen JSON-Objekt, ohne Erklärungen oder Markdown.
 
@@ -156,23 +177,23 @@ Das JSON muss exakt dieses Format haben:
 {{
     "name": "Rezeptname",
     "description": "Eine kurze Beschreibung des Rezepts",
-    "recipeYield": "1 Portion",
+    "recipeYield": "4 Portionen",
     "recipeIngredient": [
-        {{"quantity": 50, "unit": "g", "food": "Mehl", "note": ""}},
-        {{"quantity": 25, "unit": "ml", "food": "Milch", "note": ""}},
-        {{"quantity": 0.25, "unit": "TL", "food": "Salz", "note": ""}},
-        {{"quantity": 0.5, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
-        {{"quantity": 0.25, "unit": "", "food": "Ei", "note": ""}}
+        {{"quantity": 500, "unit": "g", "food": "Mehl", "note": ""}},
+        {{"quantity": 250, "unit": "ml", "food": "Milch", "note": ""}},
+        {{"quantity": 1, "unit": "TL", "food": "Salz", "note": ""}},
+        {{"quantity": 2, "unit": "EL", "food": "Olivenöl", "note": "extra vergine"}},
+        {{"quantity": 3, "unit": "", "food": "Ei", "note": ""}}
     ],
     "recipeInstructions": [
-        {{"text": "Schritt 1 Beschreibung"}},
+        {{"text": "Schritt 1 - bei Teilmengen relative Angaben nutzen (z.B. 'die Hälfte vom Mehl')"}},
         {{"text": "Schritt 2 Beschreibung"}}
     ],
     "best_image_index": 0
 }}
 
-WICHTIG für recipeIngredient (IMMER für 1 Portion!):
-- "quantity": Anzahl als Zahl für 1 PORTION (z.B. 50, 0.25, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
+WICHTIG für recipeIngredient (ORIGINALMENGEN beibehalten!):
+- "quantity": Die ORIGINALMENGE aus dem Rezept als Zahl (z.B. 500, 3, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
 - "unit": Einheit als Text (g, kg, ml, l, TL, EL, Prise, Stück, Bund, Dose, Packung, etc.). Leer lassen wenn keine Einheit.
 - "food": Das Lebensmittel selbst (Mehl, Salz, Karotten, etc.)
 - "note": Zusätzliche Hinweise (z.B. "gehackt", "frisch", "optional"). Leer lassen wenn keine.
@@ -190,8 +211,13 @@ RECIPE_PROMPT_MULTI_IMAGE = """
 Analysiere diese Fotos eines Rezepts (z.B. mehrere Seiten aus einem Kochbuch).
 Extrahiere alle Informationen die du auf den Bildern lesen kannst und kombiniere sie zu einem vollständigen Rezept.
 
-WICHTIG: Rechne ALLE Zutatenmengen auf 1 PORTION um!
-Wenn das Rezept z.B. für 4 Portionen ist, teile alle Mengen durch 4.
+WICHTIG: Behalte die ORIGINALMENGEN aus dem Rezept bei! NICHT auf 1 Portion umrechnen!
+Gib bei recipeYield an, für wieviele Portionen/Personen das Rezept ist.
+
+WICHTIG für Zubereitungsschritte: Wenn in einem Schritt nur ein TEIL einer Zutat verwendet wird,
+gib die RELATIVE Menge an statt der absoluten. Beispiel:
+- FALSCH: "Gib 200g Mehl in die Schüssel" (wenn insgesamt 600g Mehl benötigt werden)
+- RICHTIG: "Gib 1/3 vom Mehl in die Schüssel" oder "Gib die Hälfte der Butter dazu"
 
 Antworte NUR mit einem validen JSON-Objekt, ohne Erklärungen oder Markdown.
 
@@ -199,17 +225,23 @@ Das JSON muss exakt dieses Format haben:
 {{
     "name": "Rezeptname",
     "description": "Eine kurze Beschreibung des Rezepts",
-    "recipeYield": "1 Portion",
+    "recipeYield": "4 Portionen",
     "recipeIngredient": [
-        {{"quantity": 50, "unit": "g", "food": "Mehl", "note": ""}},
-        {{"quantity": 25, "unit": "ml", "food": "Milch", "note": ""}}
+        {{"quantity": 500, "unit": "g", "food": "Mehl", "note": ""}},
+        {{"quantity": 250, "unit": "ml", "food": "Milch", "note": ""}}
     ],
     "recipeInstructions": [
-        {{"text": "Schritt 1 Beschreibung"}},
+        {{"text": "Schritt 1 - bei Teilmengen relative Angaben nutzen (z.B. 'die Hälfte vom Mehl')"}},
         {{"text": "Schritt 2 Beschreibung"}}
     ],
     "best_image_index": 0
 }}
+
+WICHTIG für recipeIngredient (ORIGINALMENGEN beibehalten!):
+- "quantity": Die ORIGINALMENGE aus dem Rezept als Zahl (z.B. 500, 3, 0.5). Bei "etwas" oder "nach Geschmack" nutze 0.
+- "unit": Einheit als Text (g, kg, ml, l, TL, EL, Prise, Stück, Bund, Dose, Packung, etc.). Leer lassen wenn keine Einheit.
+- "food": Das Lebensmittel selbst (Mehl, Salz, Karotten, etc.)
+- "note": Zusätzliche Hinweise (z.B. "gehackt", "frisch", "optional"). Leer lassen wenn keine.
 
 WICHTIG für best_image_index:
 - Wähle das Bild das am besten als Rezeptfoto/Cover geeignet ist (0-basierter Index)
@@ -310,8 +342,67 @@ class GeminiClient:
         return GeminiError(message=error_str)
     
     def _clean_json_response(self, text: str) -> str:
-        """Entfernt Markdown-Codeblöcke aus der Antwort."""
-        return re.sub(r'```json\s*|```\s*', '', text).strip()
+        """
+        Extrahiert und bereinigt JSON aus der KI-Antwort.
+        
+        Behandelt verschiedene Probleme:
+        - Markdown-Codeblöcke (```json ... ```)
+        - Text vor/nach dem JSON
+        - Mehrfache JSON-Objekte (nimmt das erste)
+        
+        Args:
+            text: Rohe Antwort der KI
+            
+        Returns:
+            Bereinigter JSON-String
+        """
+        # Erst Markdown-Codeblöcke entfernen
+        cleaned = re.sub(r'```json\s*', '', text)
+        cleaned = re.sub(r'```\s*', '', cleaned)
+        cleaned = cleaned.strip()
+        
+        # Versuche das JSON-Objekt zu finden (von { bis passendes })
+        # Finde die erste öffnende Klammer
+        start_idx = cleaned.find('{')
+        if start_idx == -1:
+            return cleaned  # Kein JSON gefunden, original zurückgeben
+        
+        # Zähle Klammern um das Ende zu finden
+        depth = 0
+        end_idx = start_idx
+        in_string = False
+        escape_next = False
+        
+        for i, char in enumerate(cleaned[start_idx:], start=start_idx):
+            if escape_next:
+                escape_next = False
+                continue
+            
+            if char == '\\' and in_string:
+                escape_next = True
+                continue
+                
+            if char == '"' and not escape_next:
+                in_string = not in_string
+                continue
+            
+            if in_string:
+                continue
+                
+            if char == '{':
+                depth += 1
+            elif char == '}':
+                depth -= 1
+                if depth == 0:
+                    end_idx = i
+                    break
+        
+        # Extrahiere nur das JSON-Objekt
+        if depth == 0 and end_idx > start_idx:
+            return cleaned[start_idx:end_idx + 1]
+        
+        # Fallback: Alles ab der ersten { zurückgeben
+        return cleaned[start_idx:]
     
     def check_quota(self, model: str) -> tuple[bool, str]:
         """
